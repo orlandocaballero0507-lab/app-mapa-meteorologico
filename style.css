@@ -1,103 +1,128 @@
-body {
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: linear-gradient(135deg, #5aa177 0%, #052e16 100%);
-  color: #f8fafc;
+* {
   margin: 0;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 90vh;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-header {
+body {
+  background: linear-gradient(135deg, #020617, #0f766e);
+  color: white;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
   text-align: center;
-  margin-bottom: 30px;
+  padding: 25px;
 }
 
-.search-container {
-  margin-bottom: 20px;
+.header h1 {
+  font-size: 2.4rem;
+  color: #38bdf8;
+}
+
+.autor {
+  color: #a7f3d0;
+  font-size: 0.9rem;
+}
+
+/* CONTENEDOR */
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* BUSCADOR */
+.search-box {
   display: flex;
   gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 input {
-  padding: 10px 15px;
-  border-radius: 6px;
-  border: 1px solid #15803d;
-  background: #166534;
-  color: #fff;
-  width: 250px;
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #38bdf8;
+  background: #0f172a;
+  color: white;
 }
 
 input::placeholder {
-  color: #bbf7d0;
+  color: #94a3b8;
 }
 
 button {
-  padding: 10px 20px;
-  background: #4ade80;
-  color: #14532d;
+  padding: 12px 18px;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
+  background: #38bdf8;
+  color: #0f172a;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: 0.3s;
 }
 
 button:hover {
-  background: #22c55e;
+  background: #0ea5e9;
+  transform: scale(1.05);
 }
 
+/* TARJETA DEL CLIMA */
 .weather-card {
-  background: #16a34a;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
-  width: 100%;
-  max-width: 520px;
-  text-align: center;
-  border: 1px solid #7fc99a;
-  line-height: 1.6;
+  background: rgba(15, 23, 42, 0.85);
+  border-left: 5px solid #38bdf8;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.6s ease-in-out;
+  line-height: 1.7;
 }
 
-.description {
-  font-size: 14px;
-  background: #15803d;
-  padding: 8px;
-  border-radius: 6px;
+.weather-card h2 {
+  color: #7dd3fc;
 }
 
-.geo-data {
-  font-size: 13px;
-  color: #bbf7d0;
+.weather-card hr {
+  margin: 12px 0;
+  border: 1px solid #38bdf8;
 }
 
-hr {
-  border: 0.5px solid #4ade80;
-  margin: 15px 0;
+.weather-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
 }
 
-.weather-data h4 {
-  margin: 5px 0;
-  color: #bbf7d0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.map {
-  width: 100%;
-  height: 250px;
-  border: 0;
-  border-radius: 8px;
-  margin-top: 15px;
-}
-
-.success-footer {
-  margin-top: 15px;
-  font-size: 12px;
-  color: #bbf7d0;
+.temp-grande {
+  font-size: 2.2rem;
   font-weight: bold;
+  color: #facc15;
+}
+
+/* MAPA */
+.map-container {
+  margin-top: 20px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+}
+
+/* ANIMACIÓN */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
