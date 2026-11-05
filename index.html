@@ -3,26 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mapa Meteorológico</title>
+  <title>Clima México Pro</title>
+
   <link rel="stylesheet" href="style.css">
+
+  <!-- Iconos (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
-  <header>
-    <h1>🌍 Mapa Meteorológico de México</h1>
-    <p>Consumo de APIs OpenStreetMap y Open-Meteo. Por Orlando Gabriel Caballero Pedraza</p>
+
+  <header class="header">
+    <h1><i class="fa-solid fa-cloud-sun"></i> Clima México Pro-UTVT</h1>
+    <p>Servicio meteorológico en tiempo real</p>
+    <p class="autor">Por Orlando Gabriel Caballero Pedraza</p>
   </header>
 
-  <main>
-    <div class="search-container">
-      <input type="text" id="city-input" placeholder="Escribe un lugar (ej. Lerma, Toluca, Monterrey)...">
-      <button id="search-btn">Consultar</button>
+  <main class="container">
+
+    <div class="search-box">
+      <input type="text" id="city-input" placeholder="Ej. Lerma, Toluca, Monterrey">
+      <button id="search-btn">
+        <i class="fa-solid fa-magnifying-glass"></i> Buscar
+      </button>
     </div>
 
     <div id="weather-card" class="weather-card">
-      <p>Escribe un lugar para ver su clima y su mapa.</p>
+      <p>Escribe un lugar de México para ver su clima y su mapa.</p>
     </div>
+
+    <div id="map-container" class="map-container" hidden>
+      <iframe id="map-frame" loading="lazy"></iframe>
+    </div>
+
   </main>
 
   <script src="app.js"></script>
+
 </body>
 </html>
