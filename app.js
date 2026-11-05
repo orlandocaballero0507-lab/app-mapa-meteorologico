@@ -92,8 +92,9 @@ async function buscarClima() {
 
     // 4) Mapa de OpenStreetMap con marcador
     const margen = 0.05;
-    contenedorMapa.hidden = false;
+        contenedorMapa.hidden = false;
     mapa.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lugar.lon - margen},${lugar.lat - margen},${lugar.lon + margen},${lugar.lat + margen}&layer=mapnik&marker=${lugar.lat},${lugar.lon}`;
+    
 
   } catch (error) {
     console.error(error);
