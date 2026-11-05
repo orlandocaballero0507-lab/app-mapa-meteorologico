@@ -1,19 +1,21 @@
 const boton = document.getElementById('search-btn');
 const entrada = document.getElementById('city-input');
 const tarjeta = document.getElementById('weather-card');
+const contenedorMapa = document.getElementById('map-container');
+const mapa = document.getElementById('map-frame');
 
-// Traduce el código del clima de Open-Meteo a texto
+// Convierte el código de Open-Meteo en icono y texto
 function describirClima(codigo) {
-  if (codigo === 0) return 'Despejado ☀️';
-  if (codigo <= 3) return 'Parcialmente nublado ⛅';
-  if (codigo <= 48) return 'Niebla 🌫️';
-  if (codigo <= 67) return 'Lluvia 🌧️';
-  if (codigo <= 77) return 'Nieve ❄️';
-  if (codigo <= 82) return 'Chubascos 🌦️';
-  return 'Tormenta ⛈️';
+  if (codigo === 0) return { icono: '☀️', texto: 'Despejado' };
+  if (codigo <= 3) return { icono: '⛅', texto: 'Parcialmente nublado' };
+  if (codigo <= 48) return { icono: '🌫️', texto: 'Niebla' };
+  if (codigo <= 67) return { icono: '🌧️', texto: 'Lluvia' };
+  if (codigo <= 77) return { icono: '❄️', texto: 'Nieve' };
+  if (codigo <= 82) return { icono: '🌦️', texto: 'Chubascos' };
+  return { icono: '⛈️', texto: 'Tormenta' };
 }
 
-// Busca las coordenadas en México: primero Nominatim, y si falla usa Open-Meteo
+// Busca las coordenadas dentro de México: primero Nominatim, y si falla, Open-Meteo
 async function buscarLugar(ciudad) {
   try {
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ciudad)}&limit=1&countrycodes=mx`;
@@ -21,7 +23,7 @@ async function buscarLugar(ciudad) {
     const datos = await resp.json();
     if (datos.length > 0) {
       return {
-        nombre: datos[0].display_name,
+        nombre: datos[0].display_name.split(',').slice(0, 3).join(','),
         lat: parseFloat(datos[0].lat),
         lon: parseFloat(datos[0].lon)
       };
@@ -49,62 +51,59 @@ async function buscarClima() {
   const ciudad = entrada.value.trim();
 
   if (!ciudad) {
-    tarjeta.innerHTML = '<p>⚠️ Por favor escribe un lugar válido.</p>';
+    tarjeta.innerHTML = '<p>⚠️ Escribe una ciudad de México.</p>';
     return;
   }
 
-  tarjeta.innerHTML = '<p>🔄 Consultando datos...</p>';
+  tarjeta.innerHTML = '<p>🔄 Buscando datos en México...</p>';
 
   try {
     // 1) Coordenadas del lugar
     const lugar = await buscarLugar(ciudad);
     if (!lugar) {
-      tarjeta.innerHTML = '<p>❌ No se encontró esa ubicación en México.</p>';
+      tarjeta.innerHTML = '<p>❌ Ciudad no encontrada en México.</p>';
+      contenedorMapa.hidden = true;
       return;
     }
 
-    // 2) Clima actual con Open-Meteo
-    const urlClima = `https://api.open-meteo.com/v1/forecast?latitude=${lugar.lat}&longitude=${lugar.lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code`;
+    // 2) Clima real con Open-Meteo
+    const urlClima = `https://api.open-meteo.com/v1/forecast?latitude=${lugar.lat}&longitude=${lugar.lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,pressure_msl,weather_code&timezone=auto`;
     const respClima = await fetch(urlClima);
     const datosClima = await respClima.json();
     const actual = datosClima.current;
+    const clima = describirClima(actual.weather_code);
 
-    // 3) Mapa de OpenStreetMap con marcador
-    const margen = 0.05;
-    const urlMapa = `https://www.openstreetmap.org/export/embed.html?bbox=${lugar.lon - margen},${lugar.lat - margen},${lugar.lon + margen},${lugar.lat + margen}&layer=mapnik&marker=${lugar.lat},${lugar.lon}`;
-
-    // 4) Mostrar todo en la tarjeta
+    // 3) Mostrar la tarjeta
     tarjeta.innerHTML = `
-      <h3>🗺️ ${ciudad}</h3>
-      <p class="description">${lugar.nombre}</p>
-
-      <div class="geo-data">
-        <p><strong>Latitud:</strong> ${lugar.lat.toFixed(4)} | <strong>Longitud:</strong> ${lugar.lon.toFixed(4)}</p>
-      </div>
+      <div class="weather-icon">${clima.icono}</div>
+      <h2>${ciudad}, México</h2>
+      <p>${lugar.nombre}</p>
 
       <hr>
 
-      <div class="weather-data">
-        <h4>Clima actual</h4>
-        <p><strong>Temperatura:</strong> ${actual.temperature_2m} °C</p>
-        <p><strong>Humedad:</strong> ${actual.relative_humidity_2m} %</p>
-        <p><strong>Viento:</strong> ${actual.wind_speed_10m} km/h</p>
-        <p><strong>Condición:</strong> ${describirClima(actual.weather_code)}</p>
-      </div>
-
-      <iframe class="map" src="${urlMapa}"></iframe>
-
-      <div class="success-footer">✓ Datos sincronizados con éxito.</div>
+      <p class="temp-grande">${actual.temperature_2m}°C</p>
+      <p><b>🌥 Condición:</b> ${clima.texto}</p>
+      <p><b>🌡 Sensación térmica:</b> ${actual.apparent_temperature}°C</p>
+      <p><b>💧 Humedad:</b> ${actual.relative_humidity_2m}%</p>
+      <p><b>💨 Viento:</b> ${actual.wind_speed_10m} km/h</p>
+      <p><b>🧭 Presión:</b> ${actual.pressure_msl} hPa</p>
+      <p><b>📍 Lat:</b> ${lugar.lat.toFixed(4)} | <b>Lng:</b> ${lugar.lon.toFixed(4)}</p>
     `;
+
+    // 4) Mapa de OpenStreetMap con marcador
+    const margen = 0.05;
+    mapa.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lugar.lon - margen},${lugar.lat - margen},${lugar.lon + margen},${lugar.lat + margen}&layer=mapnik&marker=${lugar.lat},${lugar.lon}`;
+    contenedorMapa.hidden = false;
+
   } catch (error) {
     console.error(error);
-    tarjeta.innerHTML = '<p>❌ Error al conectar con el servidor.</p>';
+    tarjeta.innerHTML = '<p>❌ Error de conexión.</p>';
   }
 }
 
 boton.addEventListener('click', buscarClima);
 
-// Que también funcione con la tecla Enter
+// También funciona con la tecla Enter
 entrada.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') buscarClima();
 });
